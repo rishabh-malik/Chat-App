@@ -4,7 +4,7 @@ const express=require('express')
 //for setting the app for heroku
 const port=process.env.PORT || 3000;
 const socketIO=require('socket.io');
-const {generateMessage}=require('./utils/message');
+const {generateMessage, generateLocationMessage} = require('./utils/message');
 
 //for going into the public folder where index.html is
 const publicPath = path.join(__dirname,'../public');
@@ -20,12 +20,12 @@ app.use(express.static(publicPath));
 io.on('connection',(socket)=>{
     console.log('User connected');
 
-socket.on('disconnect', () => {
-    console.log('User was disconnected');
+socket.on('createLocationMessage', (coords) => {
+    io.emit('newLocationMessage', generateLocationMessage('Admin', coords.latitude, coords.longitude));
   });
 
-  socket.on('createLocationMessage',(coords)=>{
-   io.emit('newMessage',generateMessage('Admin',`${coords.latitude}, ${coords.longitude}`));
+socket.on('disconnect', () => {
+    console.log('User was disconnected');
   });
 
 // event emitted by admin to welcome the user who joins
