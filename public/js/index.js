@@ -8,34 +8,54 @@ socket.on('disconnect',function(){
 });
 
 //listen to custom event
-socket.on('newMessage',function(message){
+
+socket.on('newMessage', function (message) {
+  var formattedTime = moment(message.createdAt).format('h:mm a');
+  var template = jQuery('#message-template').html();
+  var html = Mustache.render(template, {
+    text: message.text,
+    from: message.from,
+    createdAt: formattedTime
+  });
+
+  jQuery('#messages').append(html);
+
+});
         
-        var formattedTime=moment(message.createdAt).format("h:mm a")
-// creating new messages appear on screen using jQuery        
-        var li=jQuery('<li></li>');
-        li.text(`${message.from} ${formattedTime}: ${message.text}`);
-        jQuery('#messages').append(li);
+//         var formattedTime=moment(message.createdAt).format("h:mm a")
+// // creating new messages appear on screen using jQuery        
+//         var li=jQuery('<li></li>');
+//         li.text(`${message.from} ${formattedTime}: ${message.text}`);
+//         jQuery('#messages').append(li);
+
+
+
+
+socket.on('newLocationMessage', function (message) {
+  var formattedTime = moment(message.createdAt).format('h:mm a');
+  var template = jQuery('#location-message-template').html();
+  var html = Mustache.render(template, {
+    from: message.from,
+    url: message.url,
+    createdAt: formattedTime
+  });
+
+  jQuery('#messages').append(html);
+  scrollToBottom();
 });
 
-socket.on('newLocationMessage',function(message){
-        var formattedTime=moment(message.createdAt).format("h:mm a")
-        var li=jQuery('<li></li>');
-        var a=jQuery('<a taget="__blank">My current location</a>')
-        li.text(`${message.from} ${formattedTime}:`);
-        a.attr('href',message.url);
-        li.append(a);
-        jQuery('#messages').append(li);
-        });
-var messageTextbox=jQuery('[name=message]');
-jQuery('#message-form').on('submit',function(e){
-        e.preventDefault();
-        socket.emit('createMessage',{
-                from:'User',
-                text:messageTextbox.val()
-},function(){
-    messageTextbox.val('');
+jQuery('#message-form').on('submit', function (e) {
+  e.preventDefault();
+
+  var messageTextbox = jQuery('[name=message]');
+
+  socket.emit('createMessage', {
+    from: 'User',
+    text: messageTextbox.val()
+  }, function () {
+    messageTextbox.val('')
+  });
 });
-        })
 
 //getting location of User
 var locationButton=jQuery('#send-location');
