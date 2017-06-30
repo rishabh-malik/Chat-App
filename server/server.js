@@ -32,13 +32,13 @@ socket.broadcast.emit('newMessage',generateMessage('Admin','Someone has joined')
 
 
   //listening to event
-  socket.on('createMessage',(message)=>{
+  socket.on('createMessage',(message,callback)=>{
     console.log('create Message',message);
     //io.emit emits the event to every single connection
     //so that when the server receives a message it emits to every single connection
     
     io.emit('newMessage',generateMessage(message.from,message.text));
-
+    callback('This is from the server');
     //to emit event to everyone expect the one who emitted the event
     // socket.broadcast.emit('newMessage',{
     //     from:message.from,
