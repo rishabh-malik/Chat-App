@@ -20,7 +20,7 @@ io.on('connection',(socket)=>{
     console.log('User connected');
 
 //emittin event from server
-socket.emit('newEmail',{
+socket.emit('newMessage',{
     from: 'rishabh@example.com',
     text:'Hey whats up',
     createdAt:123
@@ -31,8 +31,8 @@ socket.on('disconnect', () => {
   });
 
   //listening to event
-  socket.on('createEmail',(newEmail)=>{
-    console.log('create Email',newEmail)
+  socket.on('createMessage',(message)=>{
+    console.log('create Message',message)
   });
 });
 
