@@ -23,6 +23,20 @@ socket.on('disconnect', () => {
     console.log('User was disconnected');
   });
 
+// event emitted by admin to welcome the user who joins
+socket.emit('newMessage',{
+    from:'Admin',
+    text:'Welcome to the chat app'
+})
+
+//alert all users except the one who joined that someone has joined the chatroom
+socket.broadcast.emit('newMessage',{
+    from:'Admin',
+    text:'Someone has joined',
+    createdAt: new Date().getTime()
+});
+
+
   //listening to event
   socket.on('createMessage',(message)=>{
     console.log('create Message',message);
@@ -33,6 +47,12 @@ socket.on('disconnect', () => {
         text:message.text,
         createdAt: new Date().getTime()
     })
+    //to emit event to everyone expect the one who emitted the event
+    // socket.broadcast.emit('newMessage',{
+    //     from:message.from,
+    //     text:message.text,
+    //     createdAt: new Date().getTime()
+    // })
   });
 });
 
