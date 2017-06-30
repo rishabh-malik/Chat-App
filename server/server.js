@@ -19,20 +19,20 @@ app.use(express.static(publicPath));
 io.on('connection',(socket)=>{
     console.log('User connected');
 
-//emittin event from server
-socket.emit('newMessage',{
-    from: 'rishabh@example.com',
-    text:'Hey whats up',
-    createdAt:123
-});
-
 socket.on('disconnect', () => {
     console.log('User was disconnected');
   });
 
   //listening to event
   socket.on('createMessage',(message)=>{
-    console.log('create Message',message)
+    console.log('create Message',message);
+    //io.emit emits the event to every single connection
+    //so that when the server receives a message it emits to every single connection
+    io.emit('newMessage',{
+        from:message.from,
+        text:message.text,
+        createdAt: new Date().getTime()
+    })
   });
 });
 
