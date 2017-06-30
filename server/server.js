@@ -18,10 +18,22 @@ app.use(express.static(publicPath));
 // whenever a new user is connected
 io.on('connection',(socket)=>{
     console.log('User connected');
+
+//emittin event from server
+socket.emit('newEmail',{
+    from: 'rishabh@example.com',
+    text:'Hey whats up',
+    createdAt:123
 });
 
-io.on('disconnect',()=>{
+socket.on('disconnect', () => {
     console.log('User was disconnected');
+  });
+
+  //listening to event
+  socket.on('createEmail',(newEmail)=>{
+    console.log('create Email',newEmail)
+  });
 });
 
 server.listen(port,()=>{
