@@ -26,6 +26,17 @@ socket.on('join',(params,callback)=>{
     if(!isRealString(params.name) || !isRealString(params.room)){
       callback('Name and Room name are required');
     } 
+    //socket.io rooms
+    socket.join(params.room);
+    // leaving the room - socket.leave('room-name')
+
+// event emitted by admin to welcome the user who joins
+socket.emit('newMessage',generateMessage('Admin','Welcome to the chat app'));
+
+//alert all users except the one who joined that someone has joined the chatroom
+socket.broadcast.to(params.room).emit('newMessage',generateMessage('Admin',`${params.name} has joined`));
+
+
     callback();
 });
 
@@ -36,13 +47,6 @@ socket.on('createLocationMessage', (coords) => {
 socket.on('disconnect', () => {
     console.log('User was disconnected');
   });
-
-// event emitted by admin to welcome the user who joins
-socket.emit('newMessage',generateMessage('Admin','Welcome to the chat app'));
-
-//alert all users except the one who joined that someone has joined the chatroom
-socket.broadcast.emit('newMessage',generateMessage('Admin','Someone has joined'));
-
 
   //listening to event
   socket.on('createMessage',(message,callback)=>{
