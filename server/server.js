@@ -24,6 +24,10 @@ socket.on('disconnect', () => {
     console.log('User was disconnected');
   });
 
+  socket.on('createLocationMessage',(coords)=>{
+   io.emit('newMessage',generateMessage('Admin',`${coords.latitude}, ${coords.longitude}`));
+  });
+
 // event emitted by admin to welcome the user who joins
 socket.emit('newMessage',generateMessage('Admin','Welcome to the chat app'));
 
@@ -39,12 +43,6 @@ socket.broadcast.emit('newMessage',generateMessage('Admin','Someone has joined')
     
     io.emit('newMessage',generateMessage(message.from,message.text));
     callback('This is from the server');
-    //to emit event to everyone expect the one who emitted the event
-    // socket.broadcast.emit('newMessage',{
-    //     from:message.from,
-    //     text:message.text,
-    //     createdAt: new Date().getTime()
-    // })
   });
 });
 

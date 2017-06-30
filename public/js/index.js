@@ -26,3 +26,20 @@ jQuery('#message-form').on('submit',function(e){
 });
         })
 
+//getting location of User
+var locationButton=jQuery('#send-location');
+locationButton.on('click',function(){
+  if(!navigator.geolocation){
+    return alert('Geolocation not supported by your browser');
+  }
+  //getting the co-ordinates
+  navigator.geolocation.getCurrentPosition(function(position){
+   socket.emit('createLocationMessage',{
+           latitude: position.coords.latitude,
+           longitude: position.coords.longitude
+   });
+  },function(){
+          alert('Unable to fetch location');
+  })
+})
+
