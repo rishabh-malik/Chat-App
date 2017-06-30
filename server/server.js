@@ -6,6 +6,8 @@ const port=process.env.PORT || 3000;
 const socketIO=require('socket.io');
 const {generateMessage, generateLocationMessage} = require('./utils/message');
 
+const {isRealString} = require('./utils/validation');
+
 //for going into the public folder where index.html is
 const publicPath = path.join(__dirname,'../public');
 
@@ -19,6 +21,13 @@ app.use(express.static(publicPath));
 // whenever a new user is connected
 io.on('connection',(socket)=>{
     console.log('User connected');
+
+socket.on('join',(params,callback)=>{
+    if(!isRealString(params.name) || !isRealString(params.room)){
+      callback('Name and Room name are required');
+    } 
+    callback();
+});
 
 socket.on('createLocationMessage', (coords) => {
     io.emit('newLocationMessage', generateLocationMessage('Admin', coords.latitude, coords.longitude));
