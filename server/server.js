@@ -4,6 +4,7 @@ const express=require('express')
 //for setting the app for heroku
 const port=process.env.PORT || 3000;
 const socketIO=require('socket.io');
+const {generateMessage}=require('./utils/message');
 
 //for going into the public folder where index.html is
 const publicPath = path.join(__dirname,'../public');
@@ -24,17 +25,10 @@ socket.on('disconnect', () => {
   });
 
 // event emitted by admin to welcome the user who joins
-socket.emit('newMessage',{
-    from:'Admin',
-    text:'Welcome to the chat app'
-})
+socket.emit('newMessage',generateMessage('Admin','Welcome to the chat app'));
 
 //alert all users except the one who joined that someone has joined the chatroom
-socket.broadcast.emit('newMessage',{
-    from:'Admin',
-    text:'Someone has joined',
-    createdAt: new Date().getTime()
-});
+socket.broadcast.emit('newMessage',generateMessage('Admin','Someone has joined'));
 
 
   //listening to event
@@ -42,11 +36,9 @@ socket.broadcast.emit('newMessage',{
     console.log('create Message',message);
     //io.emit emits the event to every single connection
     //so that when the server receives a message it emits to every single connection
-    io.emit('newMessage',{
-        from:message.from,
-        text:message.text,
-        createdAt: new Date().getTime()
-    })
+    
+    io.emit('newMessage',generateMessage(message.from,message.text));
+
     //to emit event to everyone expect the one who emitted the event
     // socket.broadcast.emit('newMessage',{
     //     from:message.from,
